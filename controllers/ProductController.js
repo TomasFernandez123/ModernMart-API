@@ -6,14 +6,24 @@ class ProductController {
     // GET - Obtener todos los productos
     async getAllProducts(req, res, next) {
         try {
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const skip = (page - 1) * limit;
+
+            const total = await Product.countDocuments();
             const products = await Product.find()
-                .lean() // Retorna objetos JS planos (más rápido)
-                .select('-__v') // Excluye campos innecesarios
-                .maxTimeMS(8000); // Timeout de 8 segundos
+                .skip(skip)
+                .limit(limit)
+                .lean()
+                .select('-__v')
+                .maxTimeMS(8000);
 
             res.status(200).json({
                 success: true,
-                data: products
+                data: products,
+                total: total,
+                page: page,
+                limit: limit
             });
 
         } catch (err) {
