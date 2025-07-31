@@ -42,7 +42,7 @@ class ProductController {
             if (!product) {
                 return res.status(404).json({
                     success: false,
-                    mesagge: "Producto no encontrado"
+                    message: "Producto no encontrado"
                 })
             }
 
@@ -55,7 +55,7 @@ class ProductController {
             if (error.name === 'CastError') {
                 return res.status(400).json({
                     success: false,
-                    mesagge: "ID de producto invalido"
+                    message: "ID de producto invalido"
                 });
             }
             next(error)
@@ -69,7 +69,7 @@ class ProductController {
             if (error) {
                 return res.status(400).json({
                     success: false,
-                    mesagge: 'Datos de entrada invalidos',
+                    message: 'Datos de entrada invalidos',
                     errors: error.details.map(detail => detail.message)
                 })
             }
@@ -82,11 +82,12 @@ class ProductController {
                     public_id: req.file.filename // ID público de la imagen
                 }
             }
+            
             await product.save();
 
             res.status(201).json({
                 success: true,
-                mesagge: 'Producto creado correctamente',
+                message: 'Producto creado correctamente',
                 data: product
             })
 
@@ -103,7 +104,7 @@ class ProductController {
             if (error) {
                 return res.status(400).json({
                     success: false,
-                    mesagge: 'Datos de entrada invalidos',
+                    message: 'Datos de entrada invalidos',
                     errors: error.details.map(detail => detail.message)
                 })
             }
@@ -113,7 +114,7 @@ class ProductController {
             if (!product) {
                 return res.status(404).json({
                     success: false,
-                    mesagge: "Producto no encontrado"
+                    message: "Producto no encontrado"
                 })
             }
 
@@ -154,7 +155,7 @@ class ProductController {
             if (error.name === 'CastError') {
                 return res.status(400).json({
                     success: false,
-                    mesagge: "ID de producto invalido"
+                    message: "ID de producto invalido"
                 });
             }
             next(error)
@@ -170,7 +171,7 @@ class ProductController {
             if (!product) {
                 return res.status(404).json({
                     success: false,
-                    mesagge: "Producto no encontrado"
+                    message: "Producto no encontrado"
                 })
             }
 
@@ -194,7 +195,7 @@ class ProductController {
             if (error.name === 'CastError') {
                 return res.status(400).json({
                     success: false,
-                    mesagge: "ID de producto invalido"
+                    message: "ID de producto invalido"
                 });
             }
             next(error);

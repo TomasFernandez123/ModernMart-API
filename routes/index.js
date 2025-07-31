@@ -1,10 +1,14 @@
 const express = require('express');
 const productRoutes = require('./ProductRoutes');
+const saleRoutes = require('./SaleRoutes');
 
 const router = express.Router();
 
 // Rutas principales
 router.use('/products', productRoutes);
+
+// Rutas de ventas
+router.use('/sales', saleRoutes);
 
 // Ruta de información de la API
 router.get('/', (req, res) => {

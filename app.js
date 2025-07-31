@@ -13,6 +13,8 @@ var app = express();
 // Conectar a MongoDB
 if (process.env.NODE_ENV !== 'test') {
     connectDB();
+} else {
+  console.log('🔍 Modo test: No se conecta a la DB real');
 }
 
 // view engine setup
