@@ -21,8 +21,9 @@ class ProductController {
             res.status(200).json({
                 success: true,
                 data: products,
-                total: total,
+                total_products: total,
                 page: page,
+                total_pages: Math.ceil(total / limit),
                 limit: limit
             });
 
