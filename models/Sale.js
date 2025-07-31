@@ -115,7 +115,7 @@ saleSchema.statics.getBasicStats = async function () {
         { $match: { status: 'completed' } },
         {
             $group: {
-                _id: null,
+                _id: false,
                 totalSales: { $sum: 1 },
                 totalRevenue: { $sum: '$total' },
                 averageOrderValue: { $avg: '$total' }

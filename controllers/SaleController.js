@@ -1,6 +1,7 @@
 const Sale = require('../models/Sale');
 const Product = require('../models/Product');
 const { validateSale, validateSaleUpdate } = require('../utils/validators')
+const dayjs = require('dayjs');
 
 class SaleController {
     async getAllSales(req, res, next) {
@@ -9,9 +10,32 @@ class SaleController {
             const limit = parseInt(req.query.limit) || 10;
             const skip = (page - 1) * limit;
 
-            const total = await Sale.countDocuments();
+            const { period } = req.query;
+            const filters = {};
 
-            const sales = await Sale.find()
+            if (period === 'thisMonth') {
+                const start = dayjs().startOf('month').toDate();
+                const end = dayjs().endOf('month').toDate();
+                filters.createdAt = { $gte: start, $lte: end };
+
+            } else if (period === 'thisWeek') {
+                const start = dayjs().startOf('week').toDate();
+                const end = dayjs().endOf('week').toDate();
+                filters.createdAt = { $gte: start, $lte: end };
+
+            } else if (period === 'thisYear') {
+                const start = dayjs().startOf('year').toDate();
+                const end = dayjs().endOf('year').toDate();
+                filters.createdAt = { $gte: start, $lte: end };
+            } else if (period === 'thisDay') {
+                const start = dayjs().startOf('day').toDate();
+                const end = dayjs().endOf('day').toDate();
+                filters.createdAt = { $gte: start, $lte: end };
+            }
+
+            const total = await Sale.countDocuments(filters);
+
+            const sales = await Sale.find(filters)
                 .skip(skip)
                 .limit(limit)
                 .populate('products.product', 'title price category')
@@ -88,7 +112,7 @@ class SaleController {
                     return {
                         product: item.product,
                         quantity: item.quantity,
-                        unitPrice: product.price 
+                        unitPrice: product.price
                     };
                 })
             );
