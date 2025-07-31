@@ -11,7 +11,9 @@ var routes = require('./routes');
 var app = express();
 
 // Conectar a MongoDB
-connectDB()
+if (process.env.NODE_ENV !== 'test') {
+    connectDB();
+}
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

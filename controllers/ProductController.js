@@ -11,6 +11,7 @@ class ProductController {
             const skip = (page - 1) * limit;
 
             const total = await Product.countDocuments();
+
             const products = await Product.find()
                 .skip(skip)
                 .limit(limit)
@@ -26,7 +27,7 @@ class ProductController {
                 total_pages: Math.ceil(total / limit),
                 limit: limit
             });
-
+            
         } catch (err) {
             next(err);
         }
