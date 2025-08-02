@@ -40,9 +40,13 @@ const productSchema = new mongoose.Schema({
   image: {
     url: String,
     public_id: String
+  },
+  active: {
+    type: Boolean,
+    default: true
   }
 }, {
-  timestamps: false, // Añade createdAt y updatedAt automáticamente
+  timestamps: true, // Añade createdAt y updatedAt automáticamente
   versionKey: false // Elimina el campo __v
 });
 

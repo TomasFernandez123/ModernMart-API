@@ -217,6 +217,77 @@ class ProductController {
             next(error);
         }
     }
+
+    async getProductStats(req, res, next) {
+        try {
+            const totalProducts = await Product.countDocuments();
+            const totalActiveProducts = await Product.countDocuments({ active: true });
+            const categories = await Product.distinct('category');
+            const productsByCategory = await Product.aggregate([
+                { $group: { _id: '$category', count: { $sum: 1 } } }
+            ]);
+
+            res.status(200).json({
+                success: true,
+                data: {
+                    totalProducts,
+                    totalActiveProducts,
+                    categories,
+                    productsByCategory
+                }
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getAllActiveProducts(req, res, next) {
+        try {
+            const products = await Product.find({ active: true });
+
+            res.status(200).json({
+                success: true,
+                data: products
+            });
+
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async changeStatus(req, res, next) {
+        try {
+            const { id } = req.params;
+
+            const product = await Product.findById(id);
+
+            if (!product) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Producto no encontrado"
+                })
+            }
+
+            product.active = !product.active;
+
+            await product.save();
+
+            res.status(200).json({
+                success: true,
+                message: 'Producto actualizado exitosamente',
+                data: product
+            });
+
+        } catch (error) {
+            if (error.name === 'CastError') {
+                return res.status(400).json({
+                    success: false,
+                    message: "ID de producto invalido"
+                });
+            }
+            next(error)
+        }
+    }
 }
 
 module.exports = new ProductController();
