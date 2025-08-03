@@ -9,10 +9,14 @@ class ProductController {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
             const skip = (page - 1) * limit;
+            const search = req.query.search || "";
+            const regex = new RegExp(search, "i");
 
             const total = await Product.countDocuments();
 
-            const products = await Product.find()
+            const products = await Product.find({
+                title: { $regex: regex }
+            })
                 .skip(skip)
                 .limit(limit)
                 .lean()
@@ -27,11 +31,48 @@ class ProductController {
                 total_pages: Math.ceil(total / limit),
                 limit: limit
             });
-            
+
         } catch (err) {
             next(err);
         }
     }
+
+    async getAllActiveProducts(req, res, next) {
+        try {
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const skip = (page - 1) * limit;
+            const search = req.query.search || "";
+            const regex = new RegExp(search, "i");
+
+            const filter = {
+                active: true,
+                title: { $regex: regex }
+            };
+
+            const total = await Product.countDocuments(filter);
+
+            const products = await Product.find(filter)
+                .skip(skip)
+                .limit(limit)
+                .lean()
+                .select('-__v')
+                .maxTimeMS(8000);
+
+            res.status(200).json({
+                success: true,
+                data: products,
+                total_products: total,
+                page: page,
+                total_pages: Math.ceil(total / limit),
+                limit: limit
+            });
+
+        } catch (error) {
+            next(error);
+        }
+    }
+
 
     async getById(req, res, next) {
         try {
@@ -82,7 +123,7 @@ class ProductController {
                     public_id: req.file.filename // ID público de la imagen
                 }
             }
-            
+
             await product.save();
 
             res.status(201).json({
@@ -236,20 +277,6 @@ class ProductController {
                     productsByCategory
                 }
             });
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    async getAllActiveProducts(req, res, next) {
-        try {
-            const products = await Product.find({ active: true });
-
-            res.status(200).json({
-                success: true,
-                data: products
-            });
-
         } catch (error) {
             next(error);
         }
