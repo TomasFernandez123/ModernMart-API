@@ -122,6 +122,11 @@ class ProductController {
                     url: req.file.path, // URL de la imagen
                     public_id: req.file.filename // ID público de la imagen
                 }
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'No se pudo cargar la imagen'
+                })
             }
 
             await product.save();
